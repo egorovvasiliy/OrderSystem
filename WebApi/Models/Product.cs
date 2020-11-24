@@ -10,9 +10,9 @@ namespace WebApi.Models
         public string id { get; set; }
         public string name { get; set; }
         public string comment { get; set; }
-        public byte quantity { get; set; }
-        public short paidPrice { get; set; }
-        public ushort unitPrice { get; set; }
+        public string quantity { get; set; }
+        public string paidPrice { get; set; }
+        public string unitPrice { get; set; }
         public string remoteCode { get; set; }
         public string description { get; set; }
         public string vatPercentage { get; set; }

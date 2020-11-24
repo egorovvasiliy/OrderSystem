@@ -10,21 +10,28 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using WebApi.Filters;
+using WebApi.Services;
 
 namespace WebApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            Env = env;
         }
-
+        IWebHostEnvironment Env;
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            if (Env.IsDevelopment()) // Просмотр ошибок в json-response
+                services.AddControllers(options => {
+                    options.Filters.Add(new ExceptionFilter());
+                });
             services.AddControllers();
         }
 
@@ -35,13 +42,16 @@ namespace WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            //--------------------------------Для отладки
+            app.Use(async (context, next) =>
+            {
+                var x = context.Request.Path;
+                await next.Invoke();
+            });
+            //------------------------------
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
-            app.UseAuthorization();
-
+            app.UseMiddleware<CheckResponseStatusMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

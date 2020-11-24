@@ -8,12 +8,12 @@ using WebApi.Models;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/{system_type}")]
     [ApiController]
     public class OrderController : ControllerBase
     {
         [HttpPost]
-        IActionResult Post([FromBody] OrderProducts orderProducts) {
+        public IActionResult Post([FromBody] OrderProducts orderProducts, string system_type) {
             return new OkResult();
         }
     }
