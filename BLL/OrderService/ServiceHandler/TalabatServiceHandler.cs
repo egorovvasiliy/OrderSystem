@@ -8,7 +8,7 @@ namespace BLL.OrderService
         public override System_type System_Type => System_type.talabat;
         public override void HandleOrder(ref Order _order)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("TalabatServiceHandler");
         }
     }
 }

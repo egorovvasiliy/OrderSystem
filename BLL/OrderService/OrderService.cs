@@ -1,4 +1,5 @@
-﻿using BLL.Models;
+﻿using BLL.LoggerService;
+using BLL.Models;
 using DAL;
 using DAL.Entities;
 using System;
@@ -11,6 +12,10 @@ namespace BLL.OrderService
 {
     public class OrderService
     {
+        ILogerService logerService;
+        public OrderService(ILogerService _logerService) {
+            logerService = _logerService;
+        }
         Dictionary<System_type, AbstractServiceHandler> handlersOrderService = new Dictionary<System_type, AbstractServiceHandler>()
         {
             {
@@ -41,22 +46,27 @@ namespace BLL.OrderService
             }
         }
         public void StartHandlersOrders() {
-            using (var db = new OrderDbContext())
-            {
-                while (true)
+            try {
+                using (var db = new OrderDbContext())
                 {
-                    Task.Delay(5000).Wait();
-
-                    var orders = db.Orders.ToArray();
-                    for (int i = 0; i < orders.Length; i++)
+                    while (true)
                     {
-                        Enum.TryParse(orders[i].system_type, out System_type system_type);
-                        handlersOrderService[system_type].HandleOrder(ref orders[i]);//foreach не понимает ref
+                        Task.Delay(5000).Wait();
+
+                        var orders = db.Orders.ToArray();
+                        for (int i = 0; i < orders.Length; i++)
+                        {
+                            Enum.TryParse(orders[i].system_type, out System_type system_type);
+                            handlersOrderService[system_type].HandleOrder(ref orders[i]);//foreach не понимает ref
+                        }
+                        db.SaveChanges();
                     }
-                    db.SaveChanges();
                 }
             }
-            //logerService.WriteTextToLog($"{system_type} от {DateTime.Now.ToString()}\n");
+            catch(Exception ex)
+            {
+                logerService.WriteTextToLog($"{DateTime.Now.ToString()}: {ex.Message}\n");
+            }
         }
     }
 }
