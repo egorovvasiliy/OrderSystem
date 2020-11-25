@@ -57,20 +57,17 @@ namespace BLL.OrderService
                         while (true)
                         {
                             Task.Delay(5000).Wait();
-
-                            var orders = db.Orders.ToArray();
+                            var orders = db.Orders.Where(ord=> String.IsNullOrEmpty(ord.converted_order)).ToArray();
                             for (int i = 0; i < orders.Length; i++)
-                            {
-                                Enum.TryParse(orders[i].system_type, out System_type system_type);
                                 try
                                 {
-                                    if (String.IsNullOrEmpty(orders[i].converted_order))
-                                        orders[i].converted_order = handlersOrderService[system_type].HandleOrder(orders[i].source_order);
+                                    Enum.TryParse(orders[i].system_type, out System_type system_type);
+                                    orders[i].converted_order = handlersOrderService[system_type].HandleOrder(orders[i].source_order);
                                 }
-                                catch (Exception ex) {
-                                    logerService.SendMessageToLog(ex.Message);
+                                catch (Exception ex)
+                                {
+                                    logerService.SendMessageToLog($"не удалось обработать заказ id={orders[i].id}: {ex.Message}");
                                 }
-                            }
                             db.SaveChanges();
                         }
                     }
