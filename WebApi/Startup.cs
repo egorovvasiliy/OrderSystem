@@ -44,8 +44,14 @@ namespace WebApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime hostApplicationLifetime, OrderService orderService)
         {
+            hostApplicationLifetime.ApplicationStarted.Register(()=> {
+                Task.Run(() =>
+                {
+                    orderService.StartHandlersOrders();
+                });
+            });
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

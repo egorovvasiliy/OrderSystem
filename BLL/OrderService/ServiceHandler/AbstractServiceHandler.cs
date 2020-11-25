@@ -1,5 +1,5 @@
-﻿using BLL.Models;
-using DAL;
+﻿using DAL;
+using DAL.Entities;
 using System;
 
 namespace BLL.OrderService
@@ -16,6 +16,6 @@ namespace BLL.OrderService
                     : orderDbContext;
             }
         }
-        public abstract void HandleOrder(OrderProducts orderProducts);
+        public abstract void HandleOrder(ref Order order);
     }
 }

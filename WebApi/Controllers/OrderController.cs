@@ -23,19 +23,7 @@ namespace WebApi.Controllers
         }
         [HttpPost]
         public IActionResult Post([FromBody] OrderProducts orderProducts, System_type system_type) {
-            logerService.WriteTextToLog($"{system_type} от {DateTime.Now.ToString()}\n");
-            //----------------Вместо Case можно использовать отдельный метод Post(с доп.маршрутом в контроллере)--------
-            AbstractServiceHandler serviceHandler = null;
-            switch (system_type) {
-                case System_type.zomato:
-                    serviceHandler = new ZomatoServiceHandler();
-                    break;
-                default:
-                    break;
-            }
-            orderService.SetServiceHandler(serviceHandler);
-            orderService.HandleOrder(orderProducts);
-            //----------------------------------------------------------------------------------------------------------
+            orderService.AddOrderProductToDB(orderProducts, system_type);
             return new OkResult();
         }
     }
