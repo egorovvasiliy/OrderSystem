@@ -23,8 +23,14 @@ namespace WebApi.Controllers
         }
         [HttpPost]
         public IActionResult Post([FromBody] OrderProducts orderProducts, System_type system_type) {
-            orderService.AddOrderProductToDB(orderProducts, system_type);
-            return new OkResult();
+            var isAdded = orderService.AddOrderProductToDB(orderProducts, system_type);
+            if (isAdded)
+            {
+                return new OkResult();
+            }
+            else
+                return new StatusCodeResult(400);
+
         }
     }
 }

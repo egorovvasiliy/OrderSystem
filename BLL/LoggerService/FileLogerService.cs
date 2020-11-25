@@ -12,8 +12,15 @@ namespace BLL.LoggerService
     {
         Queue<string> queueMessage = new Queue<string>();
         static Object lockerQueue = new Object();
-        static Object lockerEcho = new Object();
-        public Task RunTaskEcho() =>
+        public Task SendMessageToLog(string _message) =>   //ILogerService
+            Task.Run(() =>
+            {
+                lock (lockerQueue)
+                {
+                    queueMessage.Enqueue($"{DateTime.Now.ToString()}: {_message}\n");
+                }
+            });
+        public Task RunTaskEcho() =>                      //ILogerService
             Task.Run(() =>
             {
                 string textLog = String.Empty;
@@ -27,22 +34,14 @@ namespace BLL.LoggerService
                         }
                     }
                     if (!String.IsNullOrEmpty(textLog)) {
-                        WriteTextToLog(queueMessage.Dequeue());
+                        WriteTextToLog(textLog);
+                        textLog = String.Empty;
                     }
-                    textLog = String.Empty;
                 }
             });
         public void WriteTextToLog(string _text) {
             File.AppendAllText("logs.txt", _text);
             Task.Delay(10000);
         }
-        public Task SendMessageToLog(string _message) =>
-            Task.Run(() =>
-            {
-                lock (lockerQueue)
-                {
-                    queueMessage.Enqueue(_message);
-                }
-            });
     }
 }

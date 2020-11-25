@@ -7,9 +7,9 @@ namespace BLL.OrderService
     public class UberServiceHandler : AbstractServiceHandler
     {
         public override System_type System_Type => System_type.uber;
-        public override void HandleOrder(ref Order _order)
+        public override string  HandleOrder(string _source_order)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("exception from UberServiceHandler");
         }
     }
 }

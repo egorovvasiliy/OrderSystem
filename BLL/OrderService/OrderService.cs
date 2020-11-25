@@ -2,6 +2,7 @@
 using BLL.Models;
 using DAL;
 using DAL.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,8 @@ namespace BLL.OrderService
                 new UberServiceHandler()
             }
         };
-        public void AddOrderProductToDB(OrderProducts orderProducts,System_type System_Type) {
+        public bool AddOrderProductToDB(OrderProducts orderProducts,System_type System_Type) {
+            EntityState resultState;
             using (var db = new OrderDbContext())
             {
                 var order = new Order()
@@ -41,32 +43,42 @@ namespace BLL.OrderService
                     source_order = JsonSerializer.Serialize(orderProducts),
                     created_at = DateTime.Now
                 };
-                db.Orders.Add(order);
+                resultState = db.Orders.Add(order).State;
                 db.SaveChanges();
             }
+            return resultState == EntityState.Added;
         }
-        public void StartHandlersOrders() {
-            try {
-                using (var db = new OrderDbContext())
+        public Task StartHandlersOrders()=>
+            Task.Run(()=> {
+                try
                 {
-                    while (true)
+                    using (var db = new OrderDbContext())
                     {
-                        Task.Delay(5000).Wait();
-
-                        var orders = db.Orders.ToArray();
-                        for (int i = 0; i < orders.Length; i++)
+                        while (true)
                         {
-                            Enum.TryParse(orders[i].system_type, out System_type system_type);
-                            handlersOrderService[system_type].HandleOrder(ref orders[i]);//foreach не понимает ref
+                            Task.Delay(5000).Wait();
+
+                            var orders = db.Orders.ToArray();
+                            for (int i = 0; i < orders.Length; i++)
+                            {
+                                Enum.TryParse(orders[i].system_type, out System_type system_type);
+                                try
+                                {
+                                    if (String.IsNullOrEmpty(orders[i].converted_order))
+                                        orders[i].converted_order = handlersOrderService[system_type].HandleOrder(orders[i].source_order);
+                                }
+                                catch (Exception ex) {
+                                    logerService.SendMessageToLog(ex.Message);
+                                }
+                            }
+                            db.SaveChanges();
                         }
-                        db.SaveChanges();
                     }
                 }
-            }
-            catch(Exception ex)
-            {
-                logerService.WriteTextToLog($"{DateTime.Now.ToString()}: {ex.Message}\n");
-            }
-        }
+                catch (Exception ex)
+                {
+                    logerService.SendMessageToLog(ex.Message);
+                }
+            });
     }
 }

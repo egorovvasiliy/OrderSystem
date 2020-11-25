@@ -16,6 +16,6 @@ namespace BLL.OrderService
                     : orderDbContext;
             }
         }
-        public abstract void HandleOrder(ref Order order);
+        public abstract string HandleOrder(string convertered_order);
     }
 }

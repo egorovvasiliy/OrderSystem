@@ -7,6 +7,7 @@ namespace BLL.LoggerService
 {
     public interface ILogerService
     {
-        public Task WriteTextToLog(string textLog);
+        public Task RunTaskEcho();
+        public Task SendMessageToLog(string _message);
     }
 }

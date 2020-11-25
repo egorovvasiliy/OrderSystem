@@ -25,6 +25,7 @@ namespace WebApi
             Env = env;
         }
         IWebHostEnvironment Env;
+        ILogerService logerService;
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -32,25 +33,20 @@ namespace WebApi
         {
             if (Env.IsDevelopment()) // Просмотр ошибок в json-response
                 services.AddControllers(options => {
-                    options.Filters.Add(new ExceptionFilter());
+                    options.Filters.Add(new ExceptionFilter(logerService));
                 });
             services.AddControllers();
-            services.AddSingleton<ILogerService, FileLogerService>(provider => {
-                var service = new FileLogerService();
-                service.RunTaskEcho();
-                return service;
-            });
+            services.AddSingleton<ILogerService, FileLogerService>();
             services.AddSingleton<OrderService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime hostApplicationLifetime, OrderService orderService)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime hostApplicationLifetime, OrderService orderService, ILogerService _logerService)
         {
+            logerService = _logerService;
             hostApplicationLifetime.ApplicationStarted.Register(()=> {
-                Task.Run(() =>
-                {
-                    orderService.StartHandlersOrders();
-                });
+                orderService.StartHandlersOrders();
+                _logerService.RunTaskEcho();
             });
             if (env.IsDevelopment())
             {
