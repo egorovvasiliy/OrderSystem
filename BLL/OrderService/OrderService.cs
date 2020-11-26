@@ -1,4 +1,5 @@
-﻿using BLL.LoggerService;
+﻿using BLL.Constants;
+using BLL.LoggerService;
 using BLL.Models;
 using DAL;
 using DAL.Entities;
@@ -49,7 +50,7 @@ namespace BLL.OrderService
             }
             return resultState == EntityState.Added;
         }
-        public Task StartHandlersOrders()=>
+        public Task StartHandlersOrders() =>
             Task.Run(()=> {
                 try
                 {
@@ -57,7 +58,7 @@ namespace BLL.OrderService
                     {
                         while (true)
                         {
-                            Task.Delay(5000).Wait();
+                            Task.Delay(IntervalParams.IntervalHandleOrdersToDb).Wait();
                             var orders = db.Orders.Where(ord=> String.IsNullOrEmpty(ord.converted_order)).ToArray();
                             for (int i = 0; i < orders.Length; i++)
                                 try

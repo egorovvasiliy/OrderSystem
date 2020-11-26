@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BLL.Constants;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -26,6 +27,8 @@ namespace BLL.LoggerService
                 string textLog = String.Empty;
                 while (true)
                 {
+                    //В этом месте месте может понадобиться установить задержку в милисекундах,чтобы дать возможность отработать очереди из "тасков SendMessageToLog"
+                    //т.к. при
                     lock (lockerQueue)
                     {
                         if (queueMessage.Count > 0)
@@ -40,8 +43,8 @@ namespace BLL.LoggerService
                 }
             });
         public void WriteTextToLog(string _text) {
+            Task.Delay(IntervalParams.delayWriteLog).Wait();
             File.AppendAllText("logs.txt", _text);
-            Task.Delay(10000);
         }
     }
 }
