@@ -13,7 +13,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using WebApi.Filters;
-using WebApi.Services;
 
 namespace WebApi
 {
@@ -48,20 +47,8 @@ namespace WebApi
                 orderService.StartHandlersOrders();
                 _logerService.RunTaskEcho();
             });
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            //--------------------------------Для отладки
-            app.Use(async (context, next) =>
-            {
-                var x = context.Request.Path;
-                await next.Invoke();
-            });
-            //------------------------------
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseMiddleware<CheckResponseStatusMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
