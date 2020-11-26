@@ -33,7 +33,7 @@ namespace BLL.OrderService
                 new UberServiceHandler()
             }
         };
-        public async Task<bool> AddOrderToDBAsync(OrderProducts orderProducts,System_type System_Type) {
+        public async Task<bool> AddOrderToDBAsync(OrderProducts orderProducts,System_type System_Type) { //пока можно этот метод разместить здесь
             EntityState resultState;
             using (var db = new OrderDbContext())
             {
@@ -42,6 +42,7 @@ namespace BLL.OrderService
                     order_number = int.Parse(orderProducts.orderNumber),
                     system_type = System_Type.ToString(),
                     source_order = JsonSerializer.Serialize(orderProducts),
+                    order_status=1,
                     created_at = DateTime.Now
                 };
                 var entityOrder = await db.Orders.AddAsync(order);
@@ -59,15 +60,17 @@ namespace BLL.OrderService
                         while (true)
                         {
                             Task.Delay(IntervalParams.IntervalHandleOrdersToDb).Wait();
-                            var orders = db.Orders.Where(ord=> String.IsNullOrEmpty(ord.converted_order)).ToArray();
+                            var orders = db.Orders.Where(ord=> ord.order_status==1).ToArray();
                             for (int i = 0; i < orders.Length; i++)
                                 try
                                 {
                                     Enum.TryParse(orders[i].system_type, out System_type system_type);
                                     orders[i].converted_order = handlersOrderService[system_type].HandleOrder(orders[i].source_order);
+                                    orders[i].order_status = 2;
                                 }
                                 catch (Exception ex)
                                 {
+                                    orders[i].order_status = 3;
                                     logerService.SendMessageToLog($"не удалось обработать заказ id={orders[i].id}: {ex.Message}");
                                 }
                             db.SaveChanges();

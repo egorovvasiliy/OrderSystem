@@ -11,6 +11,7 @@ namespace DAL.Entities
         public int order_number { get; set; }
         public string source_order { get; set; }
         public string converted_order { get; set; }
+        public byte order_status { get; set; }
         public DateTime created_at { get; set; }
     }
 }
