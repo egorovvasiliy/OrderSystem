@@ -32,7 +32,7 @@ namespace BLL.OrderService
                 new UberServiceHandler()
             }
         };
-        public bool AddOrderProductToDB(OrderProducts orderProducts,System_type System_Type) {
+        public async Task<bool> AddOrderToDBAsync(OrderProducts orderProducts,System_type System_Type) {
             EntityState resultState;
             using (var db = new OrderDbContext())
             {
@@ -43,7 +43,8 @@ namespace BLL.OrderService
                     source_order = JsonSerializer.Serialize(orderProducts),
                     created_at = DateTime.Now
                 };
-                resultState = db.Orders.Add(order).State;
+                var entityOrder = await db.Orders.AddAsync(order);
+                resultState = entityOrder.State;
                 db.SaveChanges();
             }
             return resultState == EntityState.Added;

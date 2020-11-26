@@ -22,8 +22,8 @@ namespace WebApi.Controllers
             orderService = _orderService;
         }
         [HttpPost]
-        public IActionResult Post([FromBody] OrderProducts orderProducts, System_type system_type) {
-            var isAdded = orderService.AddOrderProductToDB(orderProducts, system_type);
+        public async Task<IActionResult> Post([FromBody] OrderProducts orderProducts, System_type system_type) {
+            var isAdded = await orderService.AddOrderToDBAsync(orderProducts, system_type);
             if (isAdded)
             {
                 return new OkResult();
