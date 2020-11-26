@@ -1,0 +1,61 @@
+POST https://localhost:44342/api/order/talabat HTTP/1.1
+User-Agent: Fiddler
+content-type: application/json
+Host: localhost:44342
+Content-Length: 1601
+Accept: application/json
+
+{
+   "orderNumber":"352225243",
+   "products":[
+      {
+         "id":"",
+         "name":"Papas House Pasta",
+         "comment":"no green peppers, no pepperoni and no Turkey ham. Instead add grilled chicken",
+         "quantity":"1",
+         "paidPrice":"24",
+         "unitPrice":"24",
+         "remoteCode":"ProdId_33bf1315-3c0c-4df5-952b-f45a5cb1e501",
+         "description":"",
+         "vatPercentage":"",
+         "discountAmount":""
+      },
+      {
+         "id":"",
+         "name":"Cheesesticks",
+         "comment":"",
+         "quantity":"1",
+         "paidPrice":"21",
+         "unitPrice":"21",
+         "remoteCode":"ProdId_ddb762ea-5dd4-4a40-bdda-63f699c38aa3_77aa67ad-37bc-4ee7-8d2a-4320e3c04098",
+         "description":"",
+         "vatPercentage":"",
+         "discountAmount":""
+      },
+      {
+         "id":"",
+         "name":"Tiramisu",
+         "comment":"",
+         "quantity":"2",
+         "paidPrice":"30",
+         "unitPrice":"30",
+         "remoteCode":"ProdId_70bbd461-bc1c-49fa-a23e-0718d8536284",
+         "description":"",
+         "vatPercentage":"",
+         "discountAmount":""
+      },
+      {
+         "id":"",
+         "name":"Pepperoni Rolls",
+         "comment":"",
+         "quantity":"1",
+         "paidPrice":"23",
+         "unitPrice":"23",
+         "remoteCode":"ProdId_27d21751-b288-4682-b0d4-0dee7284d7ed_5eaee492-c695-4657-8ad7-d1fdf0ac0c24",
+         "description":"",
+         "vatPercentage":"",
+         "discountAmount":""
+      }
+   ],
+   "createdAt":"2020-11-20T18:21:19.069+03:00"
+}

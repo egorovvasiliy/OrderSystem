@@ -55,12 +55,12 @@ namespace BLL.OrderService
             Task.Run(()=> {
                 try
                 {
-                    using (var db = new OrderDbContext())
+                    while (true)
                     {
-                        while (true)
+                        Task.Delay(IntervalParams.IntervalHandleOrdersToDb).Wait();
+                        using (var db = new OrderDbContext())
                         {
-                            Task.Delay(IntervalParams.IntervalHandleOrdersToDb).Wait();
-                            var orders = db.Orders.Where(ord=> ord.order_status==1).ToArray();
+                            var orders = db.Orders.Where(ord => ord.order_status == 1).ToArray();
                             for (int i = 0; i < orders.Length; i++)
                                 try
                                 {
