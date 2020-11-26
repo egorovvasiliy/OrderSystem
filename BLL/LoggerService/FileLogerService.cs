@@ -27,8 +27,6 @@ namespace BLL.LoggerService
                 string textLog = String.Empty;
                 while (true)
                 {
-                    //В этом месте месте может понадобиться установить задержку в милисекундах,чтобы дать возможность отработать очереди из "тасков SendMessageToLog"
-                    //т.к. при
                     lock (lockerQueue)
                     {
                         if (queueMessage.Count > 0)
