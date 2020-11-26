@@ -22,15 +22,9 @@ namespace WebApi.Controllers
             orderService = _orderService;
         }
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] OrderProducts orderProducts, System_type system_type) {
-            var isAdded = await orderService.AddOrderToDBAsync(orderProducts, system_type);
-            if (isAdded)
-            {
-                return new OkResult();
-            }
-            else
-                return new StatusCodeResult(400);
-
-        }
+        public async Task<IActionResult> Post([FromBody] OrderProducts orderProducts, System_type system_type) =>
+            await orderService.AddOrderToDBAsync(orderProducts, system_type)
+                ? new OkResult()
+                : new StatusCodeResult(400);
     }
 }
